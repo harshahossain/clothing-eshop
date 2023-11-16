@@ -1,4 +1,13 @@
-export default function Cart({ items, onUpdateItemQuantity }) {
+import { useContext } from "react"; //for accessing the context value
+import { CartContext } from "../store/shopping-cart-context";
+
+export default function Cart({ onUpdateItemQuantity }) {
+  //
+  //const cartCntx = useContext(CartContext); //so this value would have an item property since we added it in shopping-cart-context.jsx
+  //
+  // just destructuring the above line so we wouldnt have to write cartCntx.items.reduce and etc
+  const { items } = useContext(CartContext);
+  //
   const totalPrice = items.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0

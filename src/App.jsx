@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import Header from './components/Header.jsx';
-import Shop from './components/Shop.jsx';
-import { DUMMY_PRODUCTS } from './dummy-products.js';
+import Header from "./components/Header.jsx";
+import Shop from "./components/Shop.jsx";
+import { DUMMY_PRODUCTS } from "./dummy-products.js";
+import Product from "./components/Product.jsx";
+import { CartContext } from "./store/shopping-cart-context.jsx";
 
 function App() {
   const [shoppingCart, setShoppingCart] = useState({
@@ -33,7 +35,7 @@ function App() {
           quantity: 1,
         });
       }
-//notes
+      //notes
       return {
         items: updatedItems,
       };
@@ -65,14 +67,29 @@ function App() {
     });
   }
 
+  //only using value prop cause reacts wants it. otherwise we cant access from other component  which wasnt wrapped around with context.Provider
+  //to connect it with the state we just use shoppingCart instead of  just items:[]
+  //and since  the state is also designed with items pre-built-in it  will catch on the items array automatically
+  //but the fn doesnt go through or editing the value. so there is a better way for updating them too
+  const ctxValue = {
+    items: shoppingCart.items,
+    addItemToCart: handleAddItemToCart,
+  };
+  //so we just pass the ctxValue const  to the value now
   return (
-    <>
+    <CartContext.Provider value={ctxValue}>
       <Header
         cart={shoppingCart}
         onUpdateCartItemQuantity={handleUpdateCartItemQuantity}
       />
-      <Shop onAddItemToCart={handleAddItemToCart} />
-    </>
+      <Shop>
+        {DUMMY_PRODUCTS.map((product) => (
+          <li key={product.id}>
+            <Product {...product} onAddToCart={handleAddItemToCart} />
+          </li>
+        ))}
+      </Shop>
+    </CartContext.Provider>
   );
 }
 
